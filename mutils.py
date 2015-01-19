@@ -28,7 +28,6 @@ import re
 # TODO: Exception dosctrings and documentation in general.
 # TODO: Transposition. (By means of operator overloading?)
 # TODO: Chord progressions.
-# TODO: Custom chords, scales & progressions by passing an array as parameter.
 
 
 
@@ -229,11 +228,14 @@ class Scale(list):
         root = note_t(root)
 
         if scale in _SCALE_MAP:
+            scale = _SCALE_MAP[scale]
+
+        if isinstance(scale, list):
             obj = list.__new__(cls)
             obj.append(root)
 
             interval = 0
-            for semitones in _SCALE_MAP[scale]:
+            for semitones in scale:
                 interval += semitones
                 obj.append(note_t(_midi_to_note(MidiNote(root) + interval)))
 
@@ -325,8 +327,11 @@ class Chord(list):
         root = note_t(root)
 
         if chord in _CHORD_MAP:
+            chord = _CHORD_MAP[chord]
+
+        if isinstance(chord, list):
             obj = list.__new__(cls)
-            obj.extend([note_t(_midi_to_note(MidiNote(root) + interval)) for interval in _CHORD_MAP[chord]])
+            obj.extend([note_t(_midi_to_note(MidiNote(root) + interval)) for interval in chord])
             return _list_rotate(obj, n - 1)
         else:
             raise InvalidChordException()
