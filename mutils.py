@@ -25,8 +25,9 @@ import re
 
 
 
-# TODO: Exception dosctrings and documentation in general.
-# TODO: Transposition. (By means of operator overloading?)
+# TODO: Documentation and tests.
+# TODO: Transposition.
+# TODO: Chord invensions and voicings.
 # TODO: Chord progressions.
 
 
@@ -323,7 +324,7 @@ _CHORD_MAP    = {
 }
 
 class Chord(list):
-    def __new__(cls, root, chord, inv=1, note_t=MidiNote):
+    def __new__(cls, root, chord, note_t=MidiNote):
         root = note_t(root)
 
         if chord in _CHORD_MAP:
