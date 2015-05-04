@@ -25,7 +25,7 @@ import re
 
 
 
-# TODO: Exception dosctrings and documentation in general.
+# TODO: Documentation and tests.
 # TODO: Chord voicings.
 # TODO: Chord progressions.
 
@@ -323,7 +323,7 @@ _CHORD_MAP    = {
 }
 
 class Chord(list):
-    def __new__(cls, root, chord, inv=1, note_t=MidiNote):
+    def __new__(cls, root, chord, note_t=MidiNote):
         root = note_t(root)
 
         if chord in _CHORD_MAP:
