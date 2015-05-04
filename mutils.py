@@ -21,14 +21,8 @@
 # SOFTWARE.
 
 from math import log
+import random
 import re
-
-
-
-# TODO: Documentation and tests.
-# TODO: Chord voicings.
-# TODO: Chord progressions.
-
 
 
 class InvalidNoteException(Exception):
@@ -41,16 +35,14 @@ class InvalidScaleException(Exception):
     pass
 
 
-
 def _list_rotate(list, n):
     return list[n:] + list[:n]
 
 def _midi_to_hertz(midi):
-    return 2.0 ** ((int(midi) - 69.0) / 12.0) * 440.0
+    return 2.0 ** ((midi - 69.0) / 12.0) * 440.0
 
 def _hertz_to_midi(hertz):
     return int(69.0 + 12.0 * log(hertz / 440.0, 2))
-
 
 
 _NOTE_PATTERN    = re.compile(r"^(?P<name>[A-G])(?P<accidental>x|#|##|b|bb)?(?P<octave>-1|[0-9])$")
@@ -115,16 +107,18 @@ class Note():
     def note(self):
         return self._note
 
-class MidiNote(int, Note):
+class MidiNote(float, Note):
     def __new__(cls, note):
         t = type(note)
 
         if t is MidiNote:
             return note
         elif t is FreqNote:
-            return int.__new__(cls, _hertz_to_midi(note))
+            return float.__new__(cls, _hertz_to_midi(note))
+        elif t is float:
+            return float.__new__(cls, note)
         else:
-            return int.__new__(cls, _note_to_midi(note))
+            return float.__new__(cls, _note_to_midi(note))
 
     def __init__(self, note):
         Note.__init__(self, note)
@@ -137,12 +131,13 @@ class FreqNote(float, Note):
             return float.__new__(cls, _midi_to_hertz(note))
         elif t is FreqNote:
             return note
+        elif t is float:
+            return float.__new__(cls, note)
         else:
             return float.__new__(cls, _midi_to_hertz(_note_to_midi(note)))
 
     def __init__(self, note):
         Note.__init__(self, note)
-
 
 
 _IONIAN_SCALE     = [2,2,1,2,2,2,1]
@@ -247,6 +242,10 @@ class Scale(list):
         self._root = root
         self._scale = scale
 
+    @staticmethod
+    def random(root, note_t=MidiNote):
+        return Scale(root, random.choice(_SCALE_MAP.keys()), note_t)
+
     @property
     def root(self):
         return self._root
@@ -254,7 +253,6 @@ class Scale(list):
     @property
     def scale(self):
         return self._scale
-
 
 
 _MAJOR_CHORD  = [0,4,7]
@@ -332,13 +330,17 @@ class Chord(list):
         if isinstance(chord, list):
             obj = list.__new__(cls)
             obj.extend([note_t(_midi_to_note(MidiNote(root) + interval)) for interval in chord])
-            return _list_rotate(obj, n - 1)
+            return obj
         else:
             raise InvalidChordException()
 
     def __init__(self, root, chord, note_t=MidiNote):
         self._root = root
         self._chord = chord
+
+    @staticmethod
+    def random(root, note_t=MidiNote):
+        return Chord(root, random.choice(_CHORD_MAP.keys()), note_t)
 
     @property
     def root(self):
