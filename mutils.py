@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 
-# Copyright (c) 2014 Joel Robichaud
+# Copyright (c) 2014-2015 Joel Robichaud
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ import re
 
 
 # TODO: Exception dosctrings and documentation in general.
-# TODO: Transposition. (By means of operator overloading?)
+# TODO: Chord voicings.
 # TODO: Chord progressions.
 
 
